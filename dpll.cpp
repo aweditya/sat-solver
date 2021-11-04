@@ -3,7 +3,7 @@
 
 using namespace std;
 
-bool SAT(int clauses[][4], int num_clauses, int num_var, int current_var)
+bool SAT(int clauses[][2], int num_clauses, int num_var, int current_var)
 {
     /*
         Matrix clauses is of dimension (num_clauses) x (num_var + 1)
@@ -20,7 +20,7 @@ bool SAT(int clauses[][4], int num_clauses, int num_var, int current_var)
     {
         for (int i = 0; i < num_clauses; i++)
         {
-            if (clauses[num_var][i] == 0)
+            if (clauses[i][num_var] == 0)
             { // The problem is UNSAT
                 return false;
             }
@@ -38,11 +38,11 @@ bool SAT(int clauses[][4], int num_clauses, int num_var, int current_var)
         */
         for (int i = 0; i < num_clauses; i++)
         { // current_var is assigned 1
-            if (clauses[num_var][i] == 0)
+            if (clauses[i][num_var] == 0)
             { // check if the clause is already satisfied
-                if (clauses[current_var][i] == 1)
+                if (clauses[i][current_var] == 1)
                 { // if the variable is uncomplemented, the clause is satisfied
-                    clauses[num_var][i] = 1;
+                    clauses[i][num_var] = 1;
                 }
             }
         }
@@ -50,11 +50,11 @@ bool SAT(int clauses[][4], int num_clauses, int num_var, int current_var)
 
         for (int i = 0; i < num_clauses; i++)
         { // current_var is assigned 0
-            if (clauses[num_var][i] == 0)
+            if (clauses[i][num_var] == 0)
             { // check if the clause is already satisfied
-                if (clauses[current_var][i] == -1)
+                if (clauses[i][current_var] == -1)
                 { // if the variable is complemented, the clause is satisfied
-                    clauses[num_var][i] = 1;
+                    clauses[i][num_var] = 1;
                 }
             }
         }
@@ -65,8 +65,11 @@ bool SAT(int clauses[][4], int num_clauses, int num_var, int current_var)
 
 int main()
 {
-    int num_clauses = 2, num_var = 3;
-    int clauses[num_clauses][4] = {{1, 0, -1, 0}, {-1, 1, 1, 0}};
+    int num_clauses = 2, num_var = 1;
+    int clauses[num_clauses][2] = {
+        {1, 0}, 
+        {1, 0}
+    };
     for (int i = 0; i < num_clauses; i++) 
     {
         for (int j = 0; j < num_var + 1; j++) 
