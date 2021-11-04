@@ -1,9 +1,9 @@
 #include <iostream>
-#include <cmath>
+#include <vector>
 
 using namespace std;
 
-bool SAT(int clauses[][2], int num_clauses, int num_var, int current_var)
+bool SAT(vector < vector<int> > clauses, int num_clauses, int num_var, int current_var)
 {
     /*
         Matrix clauses is of dimension (num_clauses) x (num_var + 1)
@@ -66,7 +66,7 @@ bool SAT(int clauses[][2], int num_clauses, int num_var, int current_var)
 int main()
 {
     int num_clauses = 2, num_var = 1;
-    int clauses[num_clauses][2] = {
+    vector < vector<int> > clauses = {
         {1, 0}, 
         {1, 0}
     };
