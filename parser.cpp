@@ -168,6 +168,7 @@ public:
     }
 };
 
+/*
 int main(int argc, char **argv)
 {
     Parser parser(argv[1]);
@@ -175,3 +176,4 @@ int main(int argc, char **argv)
     std::cout << "Number of variables: " << parser.getNumberOfVariables() << "\n";
     parser.printClauses();
 }
+*/
