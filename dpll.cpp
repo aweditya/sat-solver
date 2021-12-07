@@ -35,21 +35,21 @@ std::vector<std::vector<int>> convertClausetoSATMatrix(std::vector<std::vector<i
     return matrix;
 }
 
+/*
+    Matrix clauses is of dimension (num_clauses) x (num_var + 1)
+    Each entry in the matrix upto column (num_var - 1) takes the
+    values 1, 0, -1. 1 indicates that the variable is present in
+    the clause in an uncomplemented form while -1 indicates that
+    the variable is complemented. 0 indicates the absence of the
+    variable in the clause.
+    The final column is to check if the clause has been satisfied.
+    In the last level of recursion i.e. when all variables have
+    been assigned a value, we check this column to determine SAT.
+*/
 bool SAT(std::vector<std::vector<int>> clauses, int n_clauses, int n_vars, int current_var, std::vector<int> &testAssignment, std::vector<int> &solution)
 {
-    /*
-        Matrix clauses is of dimension (num_clauses) x (num_var + 1)
-        Each entry in the matrix upto column (num_var - 1) takes the
-        values 1, 0, -1. 1 indicates that the variable is present in
-        the clause in an uncomplemented form while -1 indicates that
-        the variable is complemented. 0 indicates the absence of the
-        variable in the clause.
-        The final column is to check if the clause has been satisfied.
-        In the last level of recursion i.e. when all variables have
-        been assigned a value, we check this column to determine SAT.
-    */
-   if (current_var == n_vars)
-   {
+    if (current_var == n_vars)
+    {
         for (int i = 0; i < n_clauses; i++)
         {
             if (clauses[i][n_vars] == 0)
@@ -75,34 +75,9 @@ bool SAT(std::vector<std::vector<int>> clauses, int n_clauses, int n_vars, int c
             is present in the clause or not. If it is present and
             uncomplemented, set the SAT bit to 1. Else, leave it as it is.
         */
+        testAssignment[current_var] = 1;
 
-       
-       // std::cout << "Current Variable: " << current_var << "\n";
-
-       testAssignment[current_var] = 1;
-
-       /*
-       std::cout << "Current Assignment:\n";
-       for (int i = 0; i < n_vars; i++)
-       {
-           std::cout << testAssignment[i] << " ";
-       }
-       std::cout << "\n";
-       */
-
-        /*
-       std::cout << "SAT Matrix before assigning:\n";
-       for (int i = 0; i < n_clauses; i++)
-       {
-           for (auto x : clauses[i])
-           {
-               std::cout << x << " ";
-           }
-           std::cout << "\n";
-       }
-       */
-
-       for (int i = 0; i < n_clauses; i++)
+        for (int i = 0; i < n_clauses; i++)
         { // current_var is assigned 1
             if (clauses[i][n_vars] == 0)
             { // check if the clause is already satisfied
@@ -113,47 +88,9 @@ bool SAT(std::vector<std::vector<int>> clauses, int n_clauses, int n_vars, int c
             }
         }
 
-        /*
-        std::cout << "SAT Matrix after assigning:\n";
-        for (int i = 0; i < n_clauses; i++)
-        {
-            for (auto x : clauses[i])
-            {
-                std::cout << x << " ";
-            }
-            std::cout << "\n";
-        }
-
-        std::cout << "-------------------------------------------------\n";
-        */
-
         bool checkSATWith1 = SAT(clauses, n_clauses, n_vars, current_var + 1, testAssignment, solution);
 
-        // std::cout << "Current Variable: " << current_var << "\n";
-
         testAssignment[current_var] = 0;
-
-        /*
-        std::cout << "Current Assignment:\n";
-        for (int i = 0; i < n_vars; i++)
-        {
-            std::cout << testAssignment[i] << " ";
-        }
-        std::cout << "\n";
-        */
-
-        /*
-        std::cout << "SAT Matrix before assigning:\n";
-        for (int i = 0; i < n_clauses; i++)
-        {
-            for (auto x : clausesCopy[i])
-            {
-                std::cout << x << " ";
-            }
-            std::cout << "\n";
-        }
-        */
-
         for (int i = 0; i < n_clauses; i++)
         { // current_var is assigned 0
             if (clausesCopy[i][n_vars] == 0)
@@ -164,20 +101,6 @@ bool SAT(std::vector<std::vector<int>> clauses, int n_clauses, int n_vars, int c
                 }
             }
         }
-
-        /*
-        std::cout << "SAT Matrix after assigning:\n";
-        for (int i = 0; i < n_clauses; i++)
-        {
-            for (auto x : clausesCopy[i])
-            {
-                std::cout << x << " ";
-            }
-            std::cout << "\n";
-        }
-
-        std::cout << "-------------------------------------------------\n";
-        */
 
         bool checkSATWith0 = SAT(clausesCopy, n_clauses, n_vars, current_var + 1, testAssignment, solution);
         return (checkSATWith0 | checkSATWith1);
@@ -214,7 +137,7 @@ int main(int argc, char **argv)
             }
             std::cout << "\n";
         }
-        else 
+        else
         {
             std::cout << "UNSAT \n";
         }
