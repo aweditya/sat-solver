@@ -43,7 +43,7 @@ private:
             int converted = 0;
             if (number[0] == '-')
             {
-                for (int i = number.length() - 1; i >= 1; i--)
+                for (int i = 1; i < number.length(); i++)
                 {
                     converted = (number[i] - 48) + 10 * converted;
                 }
@@ -51,7 +51,7 @@ private:
             }
             else
             {
-                for (int i = number.length() - 1; i >= 0; i--)
+                for (int i = 0; i < number.length(); i++)
                 {
                     converted = (number[i] - 48) + 10 * converted;
                 }
