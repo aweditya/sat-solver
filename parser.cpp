@@ -84,8 +84,6 @@ private:
             }
         }
         n_clauses = stringToInt(token);
-        std::cout << "Number of Variables: " << n_vars << "\n";
-        std::cout << "Number of Clauses: " << n_clauses << "\n";
     }
 
     void processClauseLine(std::string line)
@@ -104,12 +102,6 @@ private:
                 number += line[j];
             }
         }
-        for (auto x : clause)
-        {
-            std::cout << x << " ";
-        }
-        std::cout << "\n";
-
         clauses.push_back(clause);
     }
 
@@ -178,7 +170,7 @@ public:
 int main(int argc, char **argv)
 {
     Parser parser(argv[1]);
-    // std::cout << "Number of clauses: " << parser.getNumberOfClauses() << "\n";
-    // std::cout << "Number of variables: " << parser.getNumberOfVariables() << "\n";
-    // parser.printClauses();
+    std::cout << "Number of clauses: " << parser.getNumberOfClauses() << "\n";
+    std::cout << "Number of variables: " << parser.getNumberOfVariables() << "\n";
+    parser.printClauses();
 }
