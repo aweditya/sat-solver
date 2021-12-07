@@ -3,123 +3,182 @@
 #include <string>
 #include <vector>
 
-std::string trim(const std::string s)
+class Parser
 {
-    std::string trimmed = "";
-    int start = 0;
-    while (s[start] == ' ')
-    { // Find end of whitespaces in the start
-        start++;
-    }
+private:
+    int n_vars, n_clauses;
+    std::vector<std::vector<int>> clauses;
 
-    int end = s.length() - 1;
-    while (s[end] == ' ')
-    { // Find start of whitespaces in the end
-        end--;
-    }
-    
-    for (int i = start; i <= end; i++)
+    std::string trim(const std::string s)
     {
-        trimmed += s[i];
+        std::string trimmed = "";
+        int start = 0;
+        while (s[start] == ' ')
+        { // Find end of whitespaces in the start
+            start++;
+        }
+
+        int end = s.length() - 1;
+        while (s[end] == ' ')
+        { // Find start of whitespaces in the end
+            end--;
+        }
+
+        for (int i = start; i <= end; i++)
+        {
+            trimmed += s[i];
+        }
+
+        return trimmed;
     }
 
-    return trimmed;
-}
-
-int stringToInt(const std::string number)
-{
-    if (number.length() == 1)
-    { // If there is only one digit, subtract 48 from the ASCII code
-        return (number[0] - 48);
-    }
-    else 
+    int stringToInt(const std::string number)
     {
-        int converted = 0;
-        if (number[0] == '-')
-        {
-            for (int i = number.length() - 1; i >= 1; i--)
-            {
-                converted = (number[i] - 48) + 10*converted;
-            }
-            converted *= -1;
+        if (number.length() == 1)
+        { // If there is only one digit, subtract 48 from the ASCII code
+            return (number[0] - 48);
         }
-        else 
+        else
         {
-            for (int i = number.length() - 1; i >= 0; i--)
+            int converted = 0;
+            if (number[0] == '-')
             {
-                converted = (number[i] - 48) + 10*converted;
+                for (int i = number.length() - 1; i >= 1; i--)
+                {
+                    converted = (number[i] - 48) + 10 * converted;
+                }
+                converted *= -1;
             }
+            else
+            {
+                for (int i = number.length() - 1; i >= 0; i--)
+                {
+                    converted = (number[i] - 48) + 10 * converted;
+                }
+            }
+            return converted;
         }
-        return converted;
     }
-}
 
-int main(int argc, char **argv) 
+    void processProblemLine(std::string line, int &n_vars, int &n_clauses)
+    {
+        // Problem line
+        // p cnf <n_vars> <n_clauses>
+
+        std::string token = "";
+        int tokenNumber = 1;
+        for (int j = 0; j < line.length(); j++)
+        {
+            if (line[j] == ' ')
+            {
+                if (tokenNumber == 3)
+                {
+                    n_vars = stringToInt(token);
+                }
+                tokenNumber++;
+                token = "";
+            }
+            else
+            {
+                token += line[j];
+            }
+        }
+        n_clauses = stringToInt(token);
+        std::cout << "Number of Variables: " << n_vars << "\n";
+        std::cout << "Number of Clauses: " << n_clauses << "\n";
+    }
+
+    void processClauseLine(std::string line)
+    {
+        std::string number = "";
+        std::vector <int> clause;
+        for (int j = 0; j < line.length(); j++)
+        {
+            if (line[j] == ' ')
+            {
+                clause.push_back(stringToInt(number));
+                number = "";
+            }
+            else
+            {
+                number += line[j];
+            }
+        }
+        for (auto x : clause)
+        {
+            std::cout << x << " ";
+        }
+        std::cout << "\n";
+
+        clauses.push_back(clause);
+    }
+
+public:
+    Parser(std::string path)
+    {
+        n_vars = n_clauses = 0;
+        std::string line;
+        std::ifstream dimacs(path);
+        if (dimacs.is_open())
+        {
+            while (getline(dimacs, line))
+            {
+                line = trim(line);
+                if (line.length() == 0)
+                {
+                    // Line consists of whitespaces only
+                }
+                else
+                {
+                    if (line[0] == 'c')
+                    {
+                        // Comment lines which can be ignored
+                    }
+                    else if (line[0] == 'p')
+                    {
+                        processProblemLine(line, n_vars, n_clauses);
+                    }
+                    else
+                    {
+                        processClauseLine(line);
+                    }
+                }
+            }
+            dimacs.close();
+        }
+        else
+        {
+            std::cout << "Unable to read the SAT problem.\n";
+        }
+    }
+
+    int getNumberOfClauses() 
+    {
+        return n_clauses;
+    }
+
+    int getNumberOfVariables() 
+    {
+        return n_vars;
+    }
+
+    void printClauses()
+    {
+        for (int i = 0; i < n_clauses; i++)
+        {
+            for (auto x : clauses[i])
+            {
+                std::cout << x << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+};
+
+int main(int argc, char **argv)
 {
-   std::string line;
-   std::ifstream dimacs (argv[1]);
-   if (dimacs.is_open()) 
-   {
-       while (getline(dimacs, line)) 
-       {
-           line = trim(line);
-           if (line.length() == 0) 
-           {
-               // Line consists of whitespaces only
-           }
-           else 
-           {
-               if (line[0] == 'c') 
-               {
-                   // Comment lines which can be ignored
-               }
-               else if (line[0] == 'p') 
-               {
-                   // Problem line
-                   std::string token = "";
-                   for (int j = 0; j < line.length(); j++) 
-                   {
-                       if (line[j] == ' ')
-                       {
-                           std::cout << token << "\n";
-                           token = "";
-                       }
-                       else 
-                       {
-                           token += line[j];
-                       }
-                   }
-                   std::cout << token << "\n";
-               }
-               else 
-               {
-                   // Clauses
-                   std::string number = "";
-                   std::vector<int> clause;
-                   for (int j = 0; j < line.length(); j++) 
-                   {
-                       if (line[j] == ' ') 
-                       {
-                           clause.push_back(stringToInt(number));
-                           number = "";
-                       }
-                       else 
-                       {
-                           number += line[j];
-                       }
-                   }
-                   for (auto x : clause)
-                   {
-                       std::cout << x << " ";
-                   }
-                   std::cout << "\n";
-               }
-           }
-       }
-       dimacs.close();
-   }
-   else 
-   {
-       std::cout << "Unable to read the SAT problem.\n";
-   }
+    Parser parser(argv[1]);
+    // std::cout << "Number of clauses: " << parser.getNumberOfClauses() << "\n";
+    // std::cout << "Number of variables: " << parser.getNumberOfVariables() << "\n";
+    // parser.printClauses();
 }
