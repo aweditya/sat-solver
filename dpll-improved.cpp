@@ -169,6 +169,12 @@ int chooseLiteral(int n_vars, std::vector<int> &usedLiterals)
 
 bool SAT(std::vector<std::vector<int>> clauses, int n_vars, std::vector<int> &usedLiterals)
 {
+    /*
+    std::cout << "Printing clauses on entering SAT()\n";
+    printClauses(clauses);
+    std::cout << "----------------------------------\n";
+
+*/
     if (checkConsistency(clauses))
     {
         return true;
@@ -182,6 +188,10 @@ bool SAT(std::vector<std::vector<int>> clauses, int n_vars, std::vector<int> &us
         for (int i = 0; i < clauses.size(); i++)
         {
             int unitLiteral = checkUnitClause(clauses[i]);
+            /*
+            std::cout << "Testing Unit Literal for clause " << i << ": " << unitLiteral << "\n";
+            std::cout << "----------------------------------\n";
+            */
             if (unitLiteral > 0)
             {
                 unitPropagate(unitLiteral, true, clauses);
@@ -189,15 +199,30 @@ bool SAT(std::vector<std::vector<int>> clauses, int n_vars, std::vector<int> &us
             }
             else if (unitLiteral < 0)
             {
-                unitPropagate(unitLiteral, false, clauses);
+                unitPropagate(-unitLiteral, false, clauses);
                 usedLiterals.push_back(-unitLiteral);
-
             }
         }
+        /*
+        std::cout << "Printing clauses after unitLiteral()\n";
+        printClauses(clauses);
+        std::cout << "----------------------------------\n";
+
+        std::cout << "Printing used literals after unitLiteral()\n";
+        for (auto x : usedLiterals)
+        {
+            std::cout << x << " ";
+        }
+        std::cout << "\n";
+        std::cout << "----------------------------------\n";
+        */
         for (int i = 1; i <= n_vars; i++)
         {
             int pureLiteralPolarity = checkPureLiteral(i, clauses);
-
+            /*
+            std::cout << "Testing Pure Literal for variable " << i << ": " << pureLiteralPolarity << "\n";
+            std::cout << "----------------------------------\n";
+            */
             if (pureLiteralPolarity > 0)
             {
                 pureLiteralAssign(i, true, clauses);
@@ -208,24 +233,67 @@ bool SAT(std::vector<std::vector<int>> clauses, int n_vars, std::vector<int> &us
 
                 pureLiteralAssign(i, false, clauses);
                 usedLiterals.push_back(i);
-
             }
         }
+        /*
+        std::cout << "Printing clauses after pureLiteralAssign()\n";
+        printClauses(clauses);
+        std::cout << "----------------------------------\n";
+
+        std::cout << "Printing used literals after pureLiteralAssign()\n";
+        for (auto x : usedLiterals)
+        {
+            std::cout << x << " ";
+        }
+        std::cout << "\n";
+        std::cout << "----------------------------------\n";
+        */
         std::vector<std::vector<int>> clausesCopy = copyClauses(clauses);
         std::vector<int> usedLiteralsCopy = usedLiterals;
 
         int chosenLiteral = chooseLiteral(n_vars, usedLiterals);
+        /*
+        std::cout << "Chosen literal: " << chosenLiteral << "\n";
+        std::cout << "----------------------------------\n";
+        */
         if (chosenLiteral != -1)
         {
             usedLiterals.push_back(chosenLiteral);
             updateClauses(chosenLiteral, true, clauses);
         }
+        /*
+        std::cout << "Printing clauses after updating with positive assignment\n";
+        printClauses(clauses);
+        std::cout << "----------------------------------\n";
+
+        std::cout << "Printing used literals after updating with positive assignment\n";
+        for (auto x : usedLiterals)
+        {
+            std::cout << x << " ";
+        }
+        std::cout << "\n";
+        std::cout << "----------------------------------\n";
+        */
         bool checkSATWith1 = SAT(clauses, n_vars, usedLiterals);
+
         if (chosenLiteral != -1)
         {
             usedLiteralsCopy.push_back(chosenLiteral);
             updateClauses(chosenLiteral, false, clausesCopy);
         }
+        /*
+        std::cout << "Printing clauses after updating with negative assignment\n";
+        printClauses(clauses);
+        std::cout << "----------------------------------\n";
+
+        std::cout << "Printing used literals after updating with positive assignment\n";
+        for (auto x : usedLiteralsCopy)
+        {
+            std::cout << x << " ";
+        }
+        std::cout << "\n";
+        std::cout << "----------------------------------\n";
+        */
         bool checkSATWith0 = SAT(clausesCopy, n_vars, usedLiteralsCopy);
 
         return checkSATWith1 | checkSATWith0;
