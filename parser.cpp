@@ -88,7 +88,10 @@ void Parser::processClauseLine(std::string line)
     {
         if (line[j] == ' ')
         {
-            clause.push_back(stringToInt(number));
+            if (number[0] >= 48 && number[0] <= 57 || number[0] == '-')
+            {
+                clause.push_back(stringToInt(number));
+            }
             number = "";
         }
         else
