@@ -161,13 +161,3 @@ void Parser::printClauses()
         std::cout << "\n";
     }
 }
-
-/*
-int main(int argc, char **argv)
-{
-    Parser parser(argv[1]);
-    std::cout << "Number of variables: " << parser.getNumberOfVariables() << "\n";
-    std::cout << "Number of clauses: " << parser.getNumberOfClauses() << "\n";
-    parser.printClauses();
-}
-*/
