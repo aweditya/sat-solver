@@ -1,5 +1,6 @@
 #include "parser.h"
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <vector>
 
@@ -300,6 +301,24 @@ bool SAT(std::vector<std::vector<int>> clauses, int n_vars, std::vector<int> &us
     }
 }
 
+void solve(std::string problem)
+{
+    Parser parser(problem);
+    int n_clauses = parser.getNumberOfClauses();
+    int n_vars = parser.getNumberOfVariables();
+    std::vector<std::vector<int>> clauses = parser.clauses;
+    std::vector<int> usedLiterals;
+    bool sat = SAT(clauses, n_vars, usedLiterals);
+    if (sat)
+    {
+        std::cout << "Satisfiable\n";
+    }
+    else 
+    {
+        std::cout << "Unsatisfiable\n";
+    }
+}
+
 int main(int argc, char **argv)
 {
     if (argc == 1)
@@ -312,11 +331,11 @@ int main(int argc, char **argv)
     }
     else
     {
-        Parser parser(argv[1]);
-        int n_clauses = parser.getNumberOfClauses();
-        int n_vars = parser.getNumberOfVariables();
-        std::vector<std::vector<int>> clauses = parser.clauses;
-        std::vector<int> usedLiterals;
-        std::cout << SAT(clauses, n_vars, usedLiterals) << "\n";
+        // Timing the execution
+        auto start = std::chrono::high_resolution_clock::now();
+        solve(argv[1]);
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Execution time: " << duration.count() << " microseconds\n";
     }
 }
